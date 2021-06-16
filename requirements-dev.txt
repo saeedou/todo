@@ -1,2 +1,3 @@
 bddcli
 pytest
+pytest-mock

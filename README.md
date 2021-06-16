@@ -5,3 +5,8 @@ pip install .
 todo completion install
 ```
 
+## Running Tests
+
+```bash
+make test
+```
