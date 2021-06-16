@@ -1,12 +1,15 @@
+import re
+from os.path import join, dirname
 from setuptools import setup
+
 
 with open(join(dirname(__file__), 'todo.py')) as f:
     version = re.match('.*__version__ = \'(.*?)\'', f.read(), re.S).group(1)
 
+
 DEPENDENCIES = [
     'easycli',
 ]
-
 
 
 setup(

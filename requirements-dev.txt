@@ -1,3 +1,5 @@
-bddcli
-pytest
-pytest-mock
+-r requirements-ci.txt
+ipython
+pudb
+pytest-pudb
+ropevim
