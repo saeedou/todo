@@ -21,7 +21,7 @@ setup(
     install_requires=DEPENDENCIES,
     license='MIT',
     entry_points={
-        'console_scripts':[
+        'console_scripts': [
             'todo = todo:Todo.quickstart',
         ]
     }

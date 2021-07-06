@@ -9,6 +9,10 @@ test:
 cover:
 	pytest --cov=$(PRJ) tests.py
 
+.PHONY: lint
+lint:
+	pylama
+
 .PHONY: requirements-dev
 requirements-dev:
 	pip install -r requirements-dev.txt

@@ -2,3 +2,4 @@ bddcli
 pytest
 pytest-cov
 coveralls >= 2.2
+pylama
