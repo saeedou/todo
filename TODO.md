@@ -12,10 +12,9 @@
   + submit coverage result to coveralls.io
   + add github action badge to the readme
   + add coveralls.io badge to the readme
-- make lint
-- configuration engine
++ make lint
++ list
 - append
-- list
 - delete
 - edit
 - search

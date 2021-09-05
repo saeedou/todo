@@ -9,6 +9,7 @@ with open(join(dirname(__file__), 'todo.py')) as f:
 
 DEPENDENCIES = [
     'easycli',
+    'pymlconf',
 ]
 
 
