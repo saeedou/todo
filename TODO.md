@@ -14,7 +14,7 @@
   + add coveralls.io badge to the readme
 + make lint
 + list
-- append
++ append
 - delete
 - edit
 - search

@@ -4,7 +4,7 @@ import tempfile
 import shutil
 
 import pytest
-from bddcli import Given, stdout,  Application, status, stderr, when
+from bddcli import Given, stdout,  Application, status, stderr, when, given
 
 from todo import __version__ as todo_version
 
@@ -47,11 +47,20 @@ cliapp = Application('todo', 'todo:Todo.quickstart')
 GivenApp = functools.partial(Given, cliapp)
 
 
+def appended_data(path, mode='r'):
+    with open(path, mode) as f:
+        data = f.read()
+    return data
+
+
 @pytest.fixture
 def app():
     return GivenApp
 
 
+APPEND_ERROR = '''usage: todo append [-h] item [description]
+todo append: error: the following arguments are required: item
+'''
 N = '\n'
 
 
@@ -79,3 +88,27 @@ def test_list(app, tempstruct):
     with app(f'--configfile {temproot}/foo list'):
         assert stderr == ''
         assert stdout == 'a\nb\n'
+
+
+def test_append(app, tempstruct):
+    dbroot = tempstruct(bar='')
+    temproot = tempstruct(
+        foo=f'database:\n  filename: {dbroot}/bar'
+    )
+
+    with app(f'--configfile {temproot}/foo append'):
+        assert stdout == ''
+        assert stderr == APPEND_ERROR
+        assert status == 2
+
+        when(given + ' bar ')
+        assert stdout == ''
+        assert stderr == ''
+        assert status == 0
+        assert appended_data(f'{dbroot}/bar') == 'bar:\t\n'
+
+        when(given + ' qux ' + ' corge')
+        assert stdout == ''
+        assert stderr == ''
+        assert status == 0
+        assert appended_data(f'{dbroot}/bar') == 'bar:\nqux:\tcorge\n'

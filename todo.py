@@ -22,11 +22,41 @@ class DB:
     def filename(self):
         return settings.database.filename
 
+    def append(self, item):
+        self.items.append(item)
+        with open(self.filename, 'w') as f:
+            for i in self.items:
+                f.write(i)
+                f.write('\n')
+
 
 def initialize_settings(configfile=None):
     settings.initialize(BUILTINSETTINGS)
     if configfile is not None:
         settings.loadfile(configfile)
+
+
+class Append(SubCommand):
+    __command__ = 'append'
+    __aliases__ = ['add', 'a']
+    __help__ = 'Append item and description to the todo list.'
+    __arguments__ = [
+        Argument(
+            'item',
+            help='item name'
+        ),
+        Argument(
+            'description',
+            nargs='?',
+            default='',
+            help='description name',
+        )
+    ]
+
+    def __call__(self, args):
+        db = DB()
+        appendline = f'{args.item.strip()}:\t{args.description.strip()}'
+        db.append(appendline)
 
 
 class List(SubCommand):
@@ -55,6 +85,7 @@ class Todo(Root):
             help='Configuration file to load.'
         ),
         List,
+        Append,
     ]
 
     def _execute_subcommand(self, args):

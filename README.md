@@ -20,7 +20,7 @@ make test
 ## How to use 
 
 ```
-usage: todo [-h] [-v] [-c FILENAME] {list,l,completion} ...
+usage: todo [-h] [-v] [-c FILENAME] {list,l,append,add,a,completion} ...
 
 Simple todo list
 
@@ -31,8 +31,8 @@ optional arguments:
                         Configuration file to load.
 
 Sub commands:
-  {list,l,completion}
+  {list,l,append,add,a,completion}
     list (l)            Print the todo list.
+    append (add, a)     Append item and description to the todo list.
     completion          Bash auto completion using argcomplete python package.
-
 ```
