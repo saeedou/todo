@@ -1,4 +1,5 @@
 from os import environ
+from functools import partial
 
 from pymlconf import DeferredRoot
 from easycli import Root, Argument, SubCommand
@@ -11,6 +12,22 @@ database:
   filename: {HOME}/.cache/todo.csv
 '''
 settings = DeferredRoot()
+
+
+ItemArgument = partial(
+    Argument,
+    'item',
+    help='item name'
+)
+
+
+ListArgument = partial(
+    Argument,
+    'description',
+    nargs='?',
+    default='',
+    help='description name'
+)
 
 
 class DB:
@@ -29,6 +46,17 @@ class DB:
                 f.write(i)
                 f.write('\n')
 
+    def delete(self, item):
+        data = []
+        for line in self.items:
+            if item != line.strip().split(':', 1)[0]:
+                data.append(line)
+
+        with open(self.filename, 'w') as f:
+            for i in data:
+                f.write(i)
+                f.write('\n')
+
 
 def initialize_settings(configfile=None):
     settings.initialize(BUILTINSETTINGS)
@@ -36,21 +64,25 @@ def initialize_settings(configfile=None):
         settings.loadfile(configfile)
 
 
+class Delete(SubCommand):
+    __command__ = 'delete'
+    __aliases__ = ['d', 'remove', 'r']
+    __help__ = 'To delete an item and its desctiption.'
+    __arguments__ = [ItemArgument()]
+
+    def __call__(self, args):
+        db = DB()
+        deleteitem = args.item.split(':', 1)[0]
+        db.delete(deleteitem)
+
+
 class Append(SubCommand):
     __command__ = 'append'
     __aliases__ = ['add', 'a']
     __help__ = 'Append item and description to the todo list.'
     __arguments__ = [
-        Argument(
-            'item',
-            help='item name'
-        ),
-        Argument(
-            'description',
-            nargs='?',
-            default='',
-            help='description name',
-        )
+        ItemArgument(),
+        ListArgument()
     ]
 
     def __call__(self, args):
@@ -86,6 +118,7 @@ class Todo(Root):
         ),
         List,
         Append,
+        Delete
     ]
 
     def _execute_subcommand(self, args):

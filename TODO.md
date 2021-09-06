@@ -15,6 +15,6 @@
 + make lint
 + list
 + append
-- delete
++ delete
 - edit
 - search

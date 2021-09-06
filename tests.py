@@ -47,7 +47,7 @@ cliapp = Application('todo', 'todo:Todo.quickstart')
 GivenApp = functools.partial(Given, cliapp)
 
 
-def appended_data(path, mode='r'):
+def read_db(path, mode='r'):
     with open(path, mode) as f:
         data = f.read()
     return data
@@ -61,6 +61,10 @@ def app():
 APPEND_ERROR = '''usage: todo append [-h] item [description]
 todo append: error: the following arguments are required: item
 '''
+DELETE_ERROR = '''usage: todo delete [-h] item
+todo delete: error: the following arguments are required: item
+'''
+
 N = '\n'
 
 
@@ -105,10 +109,28 @@ def test_append(app, tempstruct):
         assert stdout == ''
         assert stderr == ''
         assert status == 0
-        assert appended_data(f'{dbroot}/bar') == 'bar:\t\n'
+        assert read_db(f'{dbroot}/bar') == 'bar:\t\n'
 
         when(given + ' qux ' + ' corge')
         assert stdout == ''
         assert stderr == ''
         assert status == 0
-        assert appended_data(f'{dbroot}/bar') == 'bar:\nqux:\tcorge\n'
+        assert read_db(f'{dbroot}/bar') == 'bar:\nqux:\tcorge\n'
+
+
+def test_delete(app, tempstruct):
+    dbroot = tempstruct(bar='baz:\tqux\ncorage:\tgrault')
+    temproot = tempstruct(
+        foo=f'database:\n  filename: {dbroot}/bar'
+    )
+
+    with app(f'--configfile {temproot}/foo delete'):
+        assert stdout == ''
+        assert stderr == DELETE_ERROR
+        assert status == 2
+
+        when(given + 'baz')
+        assert stdout == ''
+        assert stderr == ''
+        assert status == 0
+        assert read_db(f'{dbroot}/bar') == 'corage:\tgrault\n'
