@@ -17,4 +17,4 @@
 + append
 + delete
 - edit
-- search
++ search

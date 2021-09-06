@@ -64,6 +64,29 @@ def initialize_settings(configfile=None):
         settings.loadfile(configfile)
 
 
+class Search(SubCommand):
+    __command__ = 'search'
+    __aliases__ = ['s']
+    __help__ = 'To print searched items(no argument print the whole list).'
+    __arguments__ = [
+        ItemArgument(
+            nargs='?',
+            default=''
+        )
+    ]
+
+    def __call__(self, args):
+        db = DB()
+        if args.item == '':
+            for i in db.items:
+                print(i)
+
+        else:
+            for i in db.items:
+                if i.strip().split(':', 1)[0] == args.item:
+                    print(i)
+
+
 class Delete(SubCommand):
     __command__ = 'delete'
     __aliases__ = ['d', 'remove', 'r']
@@ -118,7 +141,8 @@ class Todo(Root):
         ),
         List,
         Append,
-        Delete
+        Delete,
+        Search
     ]
 
     def _execute_subcommand(self, args):

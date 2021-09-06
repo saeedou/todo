@@ -134,3 +134,20 @@ def test_delete(app, tempstruct):
         assert stderr == ''
         assert status == 0
         assert read_db(f'{dbroot}/bar') == 'corage:\tgrault\n'
+
+
+def test_search(app, tempstruct):
+    dbroot = tempstruct(bar='baz:\tqux\ncorage:\tgrault')
+    temproot = tempstruct(
+        foo=f'database:\n  filename: {dbroot}/bar'
+    )
+
+    with app(f'--configfile {temproot}/foo search'):
+        assert stdout == 'baz:\tqux\ncorage:\tgrault\n'
+        assert stderr == ''
+        assert status == 0
+
+        when(given + 'baz')
+        assert stdout == 'baz:\tqux\n'
+        assert stderr == ''
+        assert status == 0
